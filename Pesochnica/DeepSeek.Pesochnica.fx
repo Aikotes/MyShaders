@@ -35,7 +35,7 @@ uniform float u_channel_offset_r <
     ui_step = 0.0001;
     ui_label = "Red Channel Offset";
     ui_tooltip = "CRT color convergence simulation";
-> = 0.000;
+> = 0.001;
 
 uniform float u_channel_offset_g <
     ui_type = "slider";
@@ -51,7 +51,7 @@ uniform float u_channel_offset_b <
     ui_max = 0.005;
     ui_step = 0.0001;
     ui_label = "Blue Channel Offset";
-> = -0.000;
+> = -0.001;
 
 // Texture declarations for intermediate passes
 texture2D texHeightMapR { Width = BUFFER_WIDTH; Height = BUFFER_HEIGHT; Format = RGBA8; };
