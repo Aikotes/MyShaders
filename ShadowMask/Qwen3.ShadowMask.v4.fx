@@ -36,7 +36,7 @@ uniform float inter_blur <
     ui_min = 0.0;
     ui_max = 2.0;
     ui_step = 0.01;
-> = 0.626;
+> = 0.23;
 
 uniform float mask_brightness_loss <
     ui_label = "Потери в маске";
