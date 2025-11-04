@@ -311,7 +311,7 @@ float4 Pass8_DisplayWithHighQualityGlow(float4 vpos : SV_Position, float2 texcoo
     return float4(display_srgb, 1.0);
 }
 // === ТЕХНИКА ===
-technique CRT_ShadowMask_v8_PhysicallyCorrect
+technique ShadowCRT
 {
     pass UpdatePersistence
     {
