@@ -16,7 +16,7 @@ uniform float pre_boost <
     ui_min = 1.0;
     ui_max = 3.0;
     ui_step = 0.1;
-> = 2.2;
+> = 2.0;
 
 uniform float mask_step <
     ui_label = "Шаг маски";
@@ -25,7 +25,7 @@ uniform float mask_step <
     ui_min = 0.5;
     ui_max = 3.0;
     ui_step = 0.1;
-> = 0.9;
+> = 1.3;
 
 uniform float intra_blur <
     ui_label = "Внутрипиксельное размытие";
@@ -43,7 +43,7 @@ uniform float inter_blur <
     ui_min = 0.0;
     ui_max = 2.0;
     ui_step = 0.01;
-> = 0.23;
+> = 2.0;
 
 uniform float mask_brightness_loss <
     ui_label = "Потери в маске";
@@ -54,7 +54,6 @@ uniform float mask_brightness_loss <
     ui_step = 0.01;
 > = 0.65;
 
-// --- НОВЫЕ ПАРАМЕТРЫ ДЛЯ СКАЙЛАЙНОВ ---
 uniform int skyline_width <
     ui_label = "Ширина скайлайна (в строках)";
     ui_tooltip = "Количество строк подряд, которые будут затемнены (0 отключает скайлайны)";
@@ -72,7 +71,6 @@ uniform float skyline_block_coeff <
     ui_max = 1.0;
     ui_step = 0.01;
 > = 0.0; // По умолчанию 0 - полное обнуление
-// --- КОНЕЦ НОВЫХ ПАРАМЕТРОВ ---
 
 uniform float crt_gamma <
     ui_label = "Гамма CRT";
@@ -84,29 +82,29 @@ uniform float crt_gamma <
 > = 0.9;
 
 // Параметры послесвечения (из Persistence.txt)
-uniform float FPS < ui_type = "slider"; ui_min = 1.0; ui_max = 120.0; ui_step = 1.0; > = 40.0;
+uniform float FPS < ui_type = "slider"; ui_min = 1.0; ui_max = 120.0; ui_step = 1.0; > = 90.0;
 uniform float PersistenceR < ui_type = "drag"; ui_min = 0.01; ui_max = 1.0; ui_step = 0.01; > = 0.01;
 uniform float PersistenceG < ui_type = "drag"; ui_min = 0.01; ui_max = 1.0; ui_step = 0.01; > = 0.01;
 uniform float PersistenceB < ui_type = "drag"; ui_min = 0.01; ui_max = 1.0; ui_step = 0.01; > = 0.01;
 uniform float InputGain     < ui_type = "drag"; ui_min = 0.0; ui_max = 2.0; ui_step = 0.01; > = 1.0;
-uniform float OutputGain    < ui_type = "drag"; ui_min = 0.0; ui_max = 5.0; ui_step = 0.01; > = 1.12;
+uniform float OutputGain    < ui_type = "drag"; ui_min = 0.0; ui_max = 5.0; ui_step = 0.01; > = 1.60;
 uniform float ResetThreshold< ui_type = "drag"; ui_min = 0.0; ui_max = 1.0; ui_step = 0.01; > = 1.0;
 
 uniform float near_radius < ui_min = 1; ui_max = 15; ui_step = 0.5; > = 5.0;
 uniform float far_radius  < ui_min = 5; ui_max = 60; ui_step = 1.0; > = 25.0;
 
-// === ПАРАМЕТРЫ ОПТИЧЕСКОГО СВЕЧЕНИЯ (PSF-based) ===
+
 uniform float glow_threshold <
     ui_label = "Glow Threshold";
     ui_tooltip = "Линейная яркость, выше которой включается свечение";
     ui_type = "drag"; ui_min = 0.0; ui_max = 2.0; ui_step = 0.01;
-> = 0.8;
+> = 0.2;
 
 uniform float glow_strength <
     ui_label = "Glow Strength";
     ui_tooltip = "Интенсивность свечения (аддитивно, не влияет на накопление)";
     ui_type = "drag"; ui_min = 0.0; ui_max = 2.0; ui_step = 0.01;
-> = 0.3;
+> = 1.0;
 
 uniform float glow_radius <
     ui_label = "Glow Radius (PSF sigma)";
@@ -114,7 +112,6 @@ uniform float glow_radius <
     ui_type = "slider"; ui_min = 0.1; ui_max = 3.0; ui_step = 0.05;
 > = 1.2;
 
-// === ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ (из v8) ===
 float3 computeHexBlur(sampler2D input_sampler, float2 texcoord, float2 texsize, float sigma_psf)
 {
     float2 texel_size = float2(BUFFER_RCP_WIDTH, BUFFER_RCP_HEIGHT);
@@ -253,8 +250,6 @@ float4 Pass2_CopyPersistence(float4 vpos : SV_Position, float2 texcoord : TexCoo
     return tex2D(AccumBSampler, texcoord);
 }
 
-// === ПРОХОД 3: ТЕНЕВАЯ МАСКА (ТОЛЬКО ПОТЕРИ + BOOST) ===
-// === ПРОХОД 3: ТЕНЕВАЯ МАСКА (ПОТЕРИ + СКАЙЛАЙНЫ) ===
 
 // === ПРОХОД 3: ТЕНЕВАЯ МАСКА (ПОТЕРИ + СКАЙЛАЙНЫ) ===
 
@@ -313,7 +308,7 @@ float4 Pass5_CopyMaskedBlurred(float4 vpos : SV_Position, float2 texcoord : TexC
     return tex2D(AccumBSampler, texcoord);
 }
 
-// === ФИНАЛЬНЫЙ ПРОХОД: ВЫСОКОКАЧЕСТВЕННОЕ ОПТИЧЕСКОЕ СВЕЧЕНИЕ ===
+// === ФИНАЛЬНЫЙ ПРОХОД: ОПТИЧЕСКОЕ СВЕЧЕНИЕ ===
 float4 Pass8_DisplayWithHighQualityGlow(float4 vpos : SV_Position, float2 texcoord : TexCoord) : SV_Target
 {
     float3 final_linear = tex2D(AccumASampler, texcoord).rgb;
